@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.Utils.File.Abstract;
 using Soenneker.Utils.File.Download.Abstract;
+using Soenneker.Utils.Json;
 
 namespace Soenneker.Rebrickable.Runners.OpenApiClient.Utils;
 
@@ -46,6 +47,12 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
 
         string? filePath = await _fileDownloadUtil.Download("https://rebrickable.com/api/v3/swagger/?format=openapi",
             targetFilePath, fileExtension: ".json", cancellationToken: cancellationToken);
+
+        string content = await _fileUtil.Read(filePath, cancellationToken: cancellationToken);
+
+        string formatted = JsonUtil.Format(content, false);
+
+        await _fileUtil.Write(filePath, formatted, cancellationToken: cancellationToken);
 
         await _processUtil.Start("dotnet", null, "tool update --global Microsoft.OpenApi.Kiota", waitForExit: true, cancellationToken: cancellationToken);
 
