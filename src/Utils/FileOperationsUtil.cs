@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Soenneker.Extensions.String;
 using Soenneker.Git.Util.Abstract;
 using Soenneker.Rebrickable.Runners.OpenApiClient.Utils.Abstract;
@@ -58,7 +58,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
 
         string srcDirectory = Path.Combine(gitDirectory, "src");
 
-        DeleteAllExceptCsproj(srcDirectory);
+        await DeleteAllExceptCsproj(srcDirectory, cancellationToken);
 
         await _processUtil.Start("kiota", gitDirectory, $"kiota generate -l CSharp -d \"{targetFilePath}\" -o src -c RebrickableOpenApiClient -n {Constants.Library}",
             waitForExit: true, cancellationToken: cancellationToken).NoSync();
@@ -66,7 +66,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         await BuildAndPush(gitDirectory, cancellationToken).NoSync();
     }
 
-    public void DeleteAllExceptCsproj(string directoryPath)
+    public async ValueTask DeleteAllExceptCsproj(string directoryPath, CancellationToken cancellationToken = default)
     {
         if (!Directory.Exists(directoryPath))
         {
@@ -83,7 +83,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
                 {
                     try
                     {
-                        File.Delete(file);
+                        await _fileUtil.Delete(file, ignoreMissing: true, log: false, cancellationToken);
                         _logger.LogInformation("Deleted file: {FilePath}", file);
                     }
                     catch (Exception ex)
