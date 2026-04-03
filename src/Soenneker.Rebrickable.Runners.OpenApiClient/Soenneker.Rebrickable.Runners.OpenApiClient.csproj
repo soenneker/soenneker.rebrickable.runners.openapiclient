@@ -51,6 +51,6 @@
         <PackageReference Include="Soenneker.Kiota.Util" Version="4.0.1" />
         <PackageReference Include="Soenneker.Managers.Runners" Version="4.0.2016" />
         <PackageReference Include="Soenneker.Utils.File.Download" Version="4.0.1549" />
-        <PackageReference Include="Soenneker.Utils.Json" Version="4.0.2508" />
+        <PackageReference Include="Soenneker.Utils.Json" Version="4.0.2509" />
     </ItemGroup>
 </Project>
