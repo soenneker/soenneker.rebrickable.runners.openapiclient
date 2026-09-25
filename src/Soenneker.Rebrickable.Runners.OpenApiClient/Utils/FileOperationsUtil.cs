@@ -62,7 +62,8 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
 
         string content = await _fileUtil.Read(filePath, cancellationToken: cancellationToken);
 
-        string formatted = JsonUtil.Format(content, false);
+        using System.Text.Json.JsonDocument document = System.Text.Json.JsonDocument.Parse(content);
+        string formatted = JsonUtil.Serialize(document, FormattingJsonContext.Default.JsonDocument);
 
         await _fileUtil.Write(filePath, formatted, cancellationToken: cancellationToken);
         await _openApiFixer.Fix(targetFilePath, fixedFilePath, cancellationToken);
